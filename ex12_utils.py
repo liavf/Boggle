@@ -1,8 +1,5 @@
 import itertools
 from collections import Counter
-NEIGHBORS_INDEXES = [0,1,-1]
-
-
 
 def get_word_from_path(board, path):
     return "".join([board[cell[0]][cell[1]] for cell in path])
