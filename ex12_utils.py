@@ -101,12 +101,12 @@ def calculate_score(paths_for_score):
         score += len(path) ** 2
     return score
 
-# def get_words(path):
-#     words = set()
-#     with open(path, "r") as f:
-#         for line in f.readlines():
-#             words.add(line.strip())
-#     return words
+def get_words(path):
+     words = set()
+     with open(path, "r") as f:
+         for line in f.readlines():
+             words.add(line.strip())
+     return words
 
 def get_relevant_words(path, board):
     board_counter = Counter(sum(board, []))
@@ -127,12 +127,17 @@ def get_relevant_words(path, board):
 if __name__ == '__main__':
     #test
     from boggle_board_randomizer import *
-    #board = randomize_board()
-    board = [['C', 'Z', 'G', 'I'], ['Y', 'O', 'G', 'U'], ['K', 'Y', 'O', 'S'], ['E', 'E', 'R', 'N']]
+    board = randomize_board()
+
     from pprint import pprint
     pprint(board)
-    #words = get_words("boggle_dict.txt")
     #print(get_neighbors((2,2), len(board)))
-    #words = get_relevant_words("boggle_dict.txt", board)
-    #print(max_score_paths(board, words))
+
+
+    words = get_relevant_words("boggle_dict.txt", board)
+    print(max_score_paths(board, words))
+
+    words = get_words("boggle_dict.txt")
+    print(max_score_paths(board, words))
+
 
