@@ -1,0 +1,21 @@
+
+
+boogle.py:
+
+class game
+game_logic
+for "mob"
+
+create dict fr
+
+class gui:
+    --> GUI:
+    - tkinter grid
+    - mouse:
+    -   change color when going over
+    -   change color for correct word in game process
+    -   stop when released
+    - print "current path/word" on the board
+    - score
+    - timer
+    -
