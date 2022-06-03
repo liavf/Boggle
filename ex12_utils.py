@@ -1,3 +1,6 @@
+import itertools
+NEIGHBORS_INDEXES = [0,1,-1]
+
 def is_valid_path(board, path, words):
     pass
 
@@ -14,7 +17,7 @@ def max_score_paths(board, words):
 
 
 def get_neighbors(location, board):
+    for
 
-
-def get_words(path)
-    - create dict by length
+def get_words(path):
+    for dx, dy in itertools.combinations(NEIGHBORS_INDEXES, 2) - [0,0]
