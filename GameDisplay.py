@@ -2,13 +2,26 @@ from GameLogic import GameLogic
 from MyButton import MyButton
 from ex12_utils import get_all_indexes, get_neighbors
 import tkinter as tk
+
 from time import strftime
-IN_GUESS = 'red'
+IN_GUESS = "lavender blush"
+BACKGROUND = "mint cream"
+SCORE_FONT = ("Calibri", 20)
+DEFAULT_FONT = ("Calibri", 20)
+BUTTONS_FONT = ("Calibri", 35)
+PLAY_FONT = ("Calibri", 35)
+DEFAULT_BG = "snow"
+WINDOW_BG = "lemon chiffon"
+
+
+
 
 class GameDisplay:
     def __init__(self):
         self.current_guess = ""
         self._root = tk.Tk()
+        self._root.geometry("450x450")
+        self._root.configure(bg = WINDOW_BG)
         self.start_menu()
         self.win = False
 
@@ -16,12 +29,12 @@ class GameDisplay:
         self.gl = GameLogic()
         # title
         self.photo_boggle = tk.PhotoImage(file=r"title_image.png")
-        self.title_button = tk.Button(self._root, image=self.photo_boggle)
-        self.title_button.pack(side=tk.TOP)
+        self.title_label = tk.Label(self._root, image=self.photo_boggle, bg=WINDOW_BG)
+        self.title_label.pack(side=tk.TOP)
         self._root.title("Boggle")
         # play_game
         self._play_button = tk.Button(self._root, text="Play", command= \
-        self._play_round, font=("Courier", 30))
+        self._play_round, font=PLAY_FONT)
         self._play_button.pack(side=tk.BOTTOM)
 
     def _play_round(self):
@@ -29,8 +42,8 @@ class GameDisplay:
         self._timer = self.gl.start_time
         self.countdown()
         self._init_board()
-        if hasattr(self, "title_button"):
-            self.title_button.destroy()
+        # if hasattr(self, "title_label"):
+        #     self.title_label.destroy()
         if hasattr(self, "_play_button"):
             self._play_button.destroy()
         if hasattr(self, "_play_again"):
@@ -39,48 +52,60 @@ class GameDisplay:
             self.win_label.destroy()
 
     def game_gui(self):
+        # title
+        self.title_label.destroy()
+        self.photo_boggle = tk.PhotoImage(file=r"small_boggle.png")
+        self.title_label = tk.Label(self._root, image=self.photo_boggle, bg=WINDOW_BG)
+        self.title_label.pack(side=tk.TOP)
         # timer
         self._timer = self.gl.start_time
-        self._time_label = tk.Label(self._root, font=("Courier", 20),
+        self._time_label = tk.Label(self._root, bg=WINDOW_BG,
+                                    font=DEFAULT_FONT,
                                     text=f"time: {self._timer // 60} mins"
                                          f" {self._timer % 60} secs")
         self._time_label.pack(side=tk.TOP)
         # score
-        self._score_label = tk.Label(self._root, font=("Courier", 20),
-                                     text=f"score: {self.gl.score}")
+        self._score_label = tk.Label(self._root, font= SCORE_FONT,
+                                     text=f"score: {self.gl.score}", bg=WINDOW_BG)
         self._score_label.pack()
 
         # check answer
-        self._check_answer_label = tk.Button(self._root, font=("Courier", 30),
+        self._check_answer_label = tk.Button(self._root, font=PLAY_FONT,
                                              command=self.check_answer,
                                              text="check")
         self._check_answer_label.pack(side=tk.BOTTOM)
 
         # all guesses
-        self._all_guess_frame = tk.Frame(self._root, bg="old lace")
-        self._all_guess_frame.pack(side = tk.LEFT)
+        self._all_guess_frame = tk.Frame(self._root, bg=WINDOW_BG)
+        self._all_guess_frame.place(x=50, y=170)
         # current selection label
-        self._current_guess_label = tk.Label(self._all_guess_frame, font=("Courier", 30))
+        self._current_guess_label = tk.Label(self._all_guess_frame,
+                                             font=DEFAULT_FONT, bg=WINDOW_BG)
         self._current_guess_label.pack(side=tk.TOP)
-        self._all_guess_title = tk.Label(self._all_guess_frame, bg="old lace", text="all guesses")
-        self._all_guess_title.pack()
-        self._all_guess = tk.Label(self._all_guess_frame, bg="old lace", text="\n".join(self.gl.guesses))
+        self._all_guess_title = tk.Label(self._all_guess_frame, bg=WINDOW_BG,
+                                         text="all guesses", font=DEFAULT_FONT)
+        self._all_guess_title.pack(side=tk.TOP)
+        self._all_guess = tk.Label(self._all_guess_frame, bg=WINDOW_BG,
+                                   text="\n".join(self.gl.guesses),
+                                   font=DEFAULT_FONT)
         self._all_guess.pack()
 
 
     def _init_board(self):
         self._buttons = []
         # frame
-        self._button_frame = tk.Frame(self._root)
-        self._button_frame.pack()
+        self._button_frame = tk.Frame(self._root, bg=WINDOW_BG)
+        self._button_frame.place(x=250, y=200)
         # create buttons
         indexes = get_all_indexes(len(self.gl.board))
         for idx in indexes:
             x, y = idx
             letter = self.gl.board[x][y]
             neighbors = get_neighbors(idx, len(self.gl.board))
-            button = MyButton(idx, letter, neighbors, self._button_frame, self._button_event)
-            button.tk.grid(row=x, column=y)
+            button = MyButton(idx, letter, neighbors, self._button_frame,
+                              self._button_event)
+            button.tk.configure(font=BUTTONS_FONT)
+            button.tk.grid(row=x, column=y, padx=1, pady=1)
             self._buttons.append(button)
 
     def _button_event(self, button):
@@ -135,7 +160,8 @@ class GameDisplay:
             self.win_label = tk.Label(self._root, text="you won")
             self.win_label.pack()
         self.win = False
-        self._play_again = tk.Button(self._root, text="Play Again", command= self._play_round, font=("Courier", 30))
+        self._play_again = tk.Button(self._root, text="Play Again", command=
+        self._play_round, font=DEFAULT_FONT)
         self._play_again.pack(side=tk.BOTTOM)
 
 
