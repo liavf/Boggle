@@ -30,10 +30,13 @@ class GameDisplay:
         self.current_guess = ""
         self._root = tk.Tk()
         #title
+        photo_boggle = tk.PhotoImage(file=r"title_image.png")
+        button2 = tk.Button(self._root, image=photo_boggle)
+        button2.pack()
         self._root.title('@ grade us 105 @')
-        title = tk.PhotoImage(file="title_image.png")
-        self._title = tk.Label(self._root, image = title)
-        self._title.pack()
+        # title = tk.PhotoImage(file="title_image.png")
+        # self._title = tk.Label(self._root, image = title)
+        # self._title.pack()
         #play_game
         self._play_button = tk.Button(self._root, text="Play", command = \
                                 self._play_round, font = ("Courier", 30))
@@ -54,11 +57,11 @@ class GameDisplay:
         self._display_label.pack(side=tk.TOP)
         frame = tk.Frame(self._root)
         frame.pack()
-        self.buttons = [tk.Label(frame) for _ in range(len(
+        self.buttons = [tk.Label(frame, font=("Courier", 20)) for _ in range(len(
             self.game_logic.board)** 2)]
-        self._fill_board(frame)
 
-    def _fill_board(self, frame):
+
+    def _fill_board(self):
         board = self.game_logic.board
         indexes = get_all_indexes(len(board))
         button_num = 0
@@ -67,7 +70,7 @@ class GameDisplay:
             letter = board[x][y]
             #todo: change color
             self.buttons[button_num].configure(text=letter)
-            self.buttons[button_num].bind("<Enter>", self._button_event(letter, button_num))
+            self.buttons[button_num].bind("<B1-Motion>", self._button_event_press)
             # self._button_event(letter, button_num), font = ("Courier", 30),
             #                                         bg = "yellow")
             #button[= tk.Button(frame, text = letter, command =
@@ -76,17 +79,42 @@ class GameDisplay:
             self.buttons[button_num].grid(row = x, column = y)
             button_num += 1
 
-    def _button_event(self, letter, button_num):
-        def button_event_helper():
-            self.current_guess += letter
-            self._display_label.configure(text = self.current_guess)
-            self.buttons[button_num].configure(text = "-", background =
-            IN_GUESS)
-        return button_event_helper
+    def _button_event_press(self, event):
+        letter = event.widget["text"]
+        button = event.widget
+        # print(letter, button)
+        self.current_guess += letter
+        self._display_label.configure(text = self.current_guess)
+        button.configure(background = IN_GUESS, command=None)
+        for but in self.buttons:
+            if not but == button:
+                but.unbind("<B1-Motion>")
+                but.bind("<Enter>", self._button_event_enter)
+                but.bind("<ButtonRelease-1>", self._button_event_release)
+        # return button_event_helper
+
+    def _button_event_enter(self, event):
+        letter = event.widget["text"]
+        button = event.widget
+        # print(letter, button)
+        self.current_guess += letter
+        self._display_label.configure(text=self.current_guess)
+        button.configure(background=IN_GUESS, command=None)
+
+    def _button_event_release(self, event):
+
+        # check if legal
+        # update score
+        # udate current guess
+        # reset buttons
+        self.current_guess = None
+
+
 
     def _play_round(self):
         self._timer = TURN_TIME
         self.countdown()
+        self._fill_board()
         return
 
     def start(self):
