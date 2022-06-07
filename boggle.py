@@ -31,8 +31,8 @@ class GameDisplay:
         self._root = tk.Tk()
         #title
         self._root.title('@ grade us 105 @')
-        self._title = tk.Label(self._root, text = "Boggle", font = ("Curier",
-                                                                  30))
+        title = tk.PhotoImage(file="title_image.png")
+        self._title = tk.Label(self._root, image = title)
         self._title.pack()
         #play_game
         self._play_button = tk.Button(self._root, text="Play", command = \
@@ -54,7 +54,7 @@ class GameDisplay:
         self._display_label.pack(side=tk.TOP)
         frame = tk.Frame(self._root)
         frame.pack()
-        self.buttons = [tk.Button(frame) for _ in range(len(
+        self.buttons = [tk.Label(frame) for _ in range(len(
             self.game_logic.board)** 2)]
         self._fill_board(frame)
 
@@ -66,9 +66,10 @@ class GameDisplay:
             x, y = index
             letter = board[x][y]
             #todo: change color
-            self.buttons[button_num].configure(text = letter, command =
-            self._button_event(letter, button_num), font = ("Courier", 30),
-                                               bg = "yellow")
+            self.buttons[button_num].configure(text=letter)
+            self.buttons[button_num].bind("<Enter>", self._button_event(letter, button_num))
+            # self._button_event(letter, button_num), font = ("Courier", 30),
+            #                                         bg = "yellow")
             #button[= tk.Button(frame, text = letter, command =
             #self._button_event(letter, button_num), font = ("Courier", 30))
             #print(button)
@@ -79,7 +80,8 @@ class GameDisplay:
         def button_event_helper():
             self.current_guess += letter
             self._display_label.configure(text = self.current_guess)
-            self.buttons[button_num].configure(text = "-", bg = IN_GUESS)
+            self.buttons[button_num].configure(text = "-", background =
+            IN_GUESS)
         return button_event_helper
 
     def _play_round(self):
