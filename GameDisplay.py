@@ -1,5 +1,5 @@
 import GameLogic as gl
-from ex12_utils import get_all_indexes
+from ex12_utils import get_all_indexes, get_neighbors
 
 class GameDisplay:
     def __init__(self, game_logic):
@@ -46,17 +46,19 @@ class GameDisplay:
                          for _ in range(len(self.game_logic.board)** 2)]
 
     def _init_board(self):
-        #frame
+        # frame
         self._button_frame = tk.Frame(self._root)
         self._button_frame.pack()
-        #create buttons
+        # create buttons
         indexes = get_all_indexes(len(gl.board))
         for idx in indexes:
             x, y = idx
             letter = gl.board[x][y]
-            button = MyButton(idx, letter, self._root)
-            self.buttons.append(button)
+            neighbors = get_neighbors(idx, len(gl.board))
+            button = MyButton(idx, letter, neighbors, self._root)
             button.grid(row=x, column=y)
+            self.buttons.append(button)
+
 
     def _fill_board(self):
         board = self.game_logic.board
