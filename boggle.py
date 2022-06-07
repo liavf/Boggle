@@ -30,6 +30,7 @@ class GameDisplay:
         self.current_guess = ""
         self._root = tk.Tk()
         #title
+        #new
         self._root.title('@ grade us 105 @')
         title = tk.PhotoImage(file="title_image.png")
         self._title = tk.Label(self._root, image = title)
