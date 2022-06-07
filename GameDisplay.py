@@ -1,95 +1,138 @@
-import GameLogic as gl
+from GameLogic import GameLogic
+from MyButton import MyButton
 from ex12_utils import get_all_indexes, get_neighbors
+import tkinter as tk
+from time import strftime
+IN_GUESS = 'red'
 
 class GameDisplay:
-    def __init__(self, game_logic):
-        self.game_logic = game_logic
+    def __init__(self):
         self.current_guess = ""
-        self.all_guesses = []
         self._root = tk.Tk()
-        #title
-        photo_boggle = tk.PhotoImage(file=r"title_image.png")
-        title_button = tk.Button(self._root, image=photo_boggle)
-        title_button.pack(side=tk.RIGHT)
+        self.start_menu()
+        self.win = False
+        # # start menu
+        # #title
+        # self.photo_boggle = tk.PhotoImage(file=r"title_image.png")
+        # self.title_button = tk.Button(self._root, image=self.photo_boggle)
+        # self.title_button.pack(side=tk.TOP)
+        # self._root.title("Boggle")
+        # #play_game
+        # self._play_button = tk.Button(self._root, text="Play", command = \
+        #                         self._play_round, font = ("Courier", 30))
+        # self._play_button.pack(side=tk.BOTTOM)
+        # #timer
+        # self._timer = self.gl.start_time
+        # self._time_label = tk.Label(self._root, font = ("Courier", 20),
+        #                             text=f"time: {self._timer // 60} mins"
+        #                             f" {self._timer % 60} secs")
+        # self._time_label.pack(side=tk.TOP)
+        # #score
+        # self._score_label = tk.Label(self._root, font = ("Courier", 20),
+        #                              text = f"score: {self.gl.score}")
+        # self._score_label.pack()
+        # #current selection label
+        # self._current_guess_label = tk.Label(self._root, font = ("Courier", 30))
+        # self._current_guess_label.pack(side=tk.TOP)
+        #
+        # # check answer
+        # self._check_answer_label = tk.Button(self._root, font=("Courier", 30), command=self.check_answer, text="check")
+        # self._check_answer_label.pack(side=tk.BOTTOM)
+        #
+        # # all guesses
+        # self._all_guess_frame = tk.Label(self._root, bg="blue")
+        # self._all_guess_frame.pack()
+
+    def start_menu(self):
+        self.gl = GameLogic()
+        # title
+        self.photo_boggle = tk.PhotoImage(file=r"title_image.png")
+        self.title_button = tk.Button(self._root, image=self.photo_boggle)
+        self.title_button.pack(side=tk.TOP)
         self._root.title("Boggle")
-        #play_game
-        self._play_button = tk.Button(self._root, text="Play", command = \
-                                self._play_round, font = ("Courier", 30))
+        # play_game
+        self._play_button = tk.Button(self._root, text="Play", command= \
+        self._play_round, font=("Courier", 30))
         self._play_button.pack(side=tk.BOTTOM)
-        #timer
-        self._timer = TURN_TIME
-        self._time_label = tk.Label(self._root, font = ("Courier", 20),
+
+    def _play_round(self):
+        self.game_gui()
+        self._timer = self.gl.start_time
+        self.countdown()
+        self._init_board()
+        if hasattr(self, "title_button"):
+            self.title_button.destroy()
+        if hasattr(self, "_play_button"):
+            self._play_button.destroy()
+        if hasattr(self, "_play_again"):
+            self._play_again.destroy()
+        if hasattr(self, "win_label"):
+            self.win_label.destroy()
+
+    def game_gui(self):
+        # timer
+        self._timer = self.gl.start_time
+        self._time_label = tk.Label(self._root, font=("Courier", 20),
                                     text=f"time: {self._timer // 60} mins"
-                                    f" {self._timer % 60} secs")
+                                         f" {self._timer % 60} secs")
         self._time_label.pack(side=tk.TOP)
-        #score
-        self._score = 0
-        self._score_label = tk.Label(self._root, font = ("Courier", 20),
-                                     text = f"score: {self._score}")
+        # score
+        self._score_label = tk.Label(self._root, font=("Courier", 20),
+                                     text=f"score: {self.gl.score}")
         self._score_label.pack()
-        #currect selection label
-        self._current_guess_label = tk.Label(self._root, font = ("Courier", 30))
+        # current selection label
+        self._current_guess_label = tk.Label(self._root, font=("Courier", 30))
         self._current_guess_label.pack(side=tk.TOP)
 
         # check answer
-        self._check_answer_label = tk.Button(self._root, font=("Courier", 30), command=self.check_answer, text="check")
+        self._check_answer_label = tk.Button(self._root, font=("Courier", 30),
+                                             command=self.check_answer,
+                                             text="check")
         self._check_answer_label.pack(side=tk.BOTTOM)
 
         # all guesses
-        self._all_guess_frame = tk.Label(self._root, bg="blue")
-        self._all_guess_frame.pack()
 
-        #buttons
-        self._button_frame = tk.Frame(self._root)
-        self._button_frame.pack()
-        self._buttons = [tk.Button(self._button_frame, font=("Courier", 20)) \
-                         for _ in range(len(self.game_logic.board)** 2)]
+        self._all_guess_frame_title = tk.Label(self._root, bg="old lace", text="all guesses")
+        self._all_guess_frame_title.pack(side = tk.LEFT)
+        self._all_guess_frame = tk.Label(self._root, bg="old lace", text="\n".join(self.gl.guesses))
+        self._all_guess_frame.pack(side = tk.LEFT)
+
 
     def _init_board(self):
+        self._buttons = []
         # frame
         self._button_frame = tk.Frame(self._root)
         self._button_frame.pack()
         # create buttons
-        indexes = get_all_indexes(len(gl.board))
+        indexes = get_all_indexes(len(self.gl.board))
         for idx in indexes:
             x, y = idx
-            letter = gl.board[x][y]
-            neighbors = get_neighbors(idx, len(gl.board))
-            button = MyButton(idx, letter, neighbors, self._root)
-            button.grid(row=x, column=y)
-            self.buttons.append(button)
+            letter = self.gl.board[x][y]
+            neighbors = get_neighbors(idx, len(self.gl.board))
+            button = MyButton(idx, letter, neighbors, self._button_frame, self._button_event)
+            button.tk.grid(row=x, column=y)
+            self._buttons.append(button)
 
-
-    def _fill_board(self):
-        board = self.game_logic.board
-        indexes = get_all_indexes(len(board))
-        button_num = 0
-        for index in indexes:
-            x, y = index
-            letter = board[x][y]
-            self._buttons[button_num].configure(text=letter, command=self._button_event(letter, button_num))
-            self._buttons[button_num].grid(row = x, column = y)
-            button_num += 1
-
-    def _button_event(self, letter, button_num):
+    def _button_event(self, button):
         def _button_event_helper():
-            self.current_guess += letter
-            self._current_guess_label.configure(text = self.current_guess)
-            self._buttons[button_num].configure(background = IN_GUESS, state="disabled")
+            self.current_guess += button.letter
+            self._current_guess_label.configure(text=self.current_guess)
+            button.pressed = True
+            button.tk.configure(background=IN_GUESS, state="disabled")
+            for but in self._buttons:
+                if but.idx in button.neighbors and not but.pressed:
+                    but.tk.configure(state="normal")
+                else:
+                    but.tk.configure(state="disabled")
         return _button_event_helper
-
-    def _play_round(self):
-        self._timer = TURN_TIME
-        self.countdown()
-        self._fill_board()
-        return
 
     def start(self):
         self._root.mainloop()
 
     def countdown(self):
-        if self._timer == 0:
-            self._time_label.configure(text="times up")
+        if self._timer == 0 or self.win:
+            self._time_label.configure(text="time's up")
+            self.play_again()
         else:
             self._time_label.configure(text=f"time: {self._timer//60} mins"
                                             f" {self._timer%60} secs")
@@ -97,24 +140,35 @@ class GameDisplay:
             self._root.after(1000, self.countdown) #every_second
 
     def check_answer(self):
-        if self.current_guess.upper() in self.game_logic.words:
-            if self.current_guess not in self.game_logic.guesses:
-                self.game_logic.guesses.add(self.current_guess)
-                self._all_guess_frame.configure(text="\n".join(self.game_logic.guesses))
-                self._score += len(self.current_guess)
-                self._score_label.configure(text=self._score)
+        if self.gl.check_called(self.current_guess):
+           self._all_guess_frame.configure(text="\n".join(self.gl.guesses))
+           self._score_label.configure(text=f"score: {self.gl.score}")
+           if self.gl.max_score <= self.gl.score:
+               self.win = True
         self.current_guess = ""
         self._current_guess_label.configure(text=self.current_guess)
         self.reset_board()
 
     def reset_board(self):
         for button in self._buttons:
-            button.configure(state="normal", bg="white")
+            button.tk.configure(state="normal", bg="white")
+            button.pressed = False
 
-    # def _check_end(self):
-    # def _mouse_press(self):
-    # def _get_location_clicked(self):??
-    #
-    # def change_color(self, x, y, color):
-    # def show_score(self):
-    # def end_round(self):
+    def play_again(self):
+        self._time_label.destroy()
+        self._button_frame.destroy()
+        self._score_label.destroy()
+        self._current_guess_label.destroy()
+        self._check_answer_label.destroy()
+        self._all_guess_frame.destroy()
+        if self.win:
+            self.win_label = tk.Label(self._root, text="you won")
+            self.win_label.pack()
+        self.win = False
+        self._play_again = tk.Button(self._root, text="Play Again", command= self._play_round, font=("Courier", 30))
+        self._play_again.pack(side=tk.BOTTOM)
+
+
+if __name__ == '__main__':
+    gd = GameDisplay()
+    gd.start()

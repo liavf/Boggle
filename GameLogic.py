@@ -12,6 +12,7 @@ class GameLogic:
         self.score = 0
         self.start_time = START_TIME
         self.guesses = set() #words
+        self.max_score = 5
 
     def new_round(self):
         self.board = randomize_board()
@@ -23,21 +24,19 @@ class GameLogic:
         self.score += self.calc_score(word)
 
     def find_in_words(self, word):
-        return word in self.words
+        return (word in self.words) and (word not in self.guesses)
 
     def check_called(self, word):
         if self.find_in_words(word):
-            if word
-            if self.current_guess.upper() in self.game_logic.words:
-                if self.current_guess not in self.game_logic.guesses:
-                    self.game_logic.guesses.add(self.current_guess)
-                    self._all_guess_frame.configure(
-                        text="\n".join(self.game_logic.guesses))
-                    self._score += len(self.current_guess)
-                    self._score_label.configure(text=self._score)
-            self.current_guess = ""
-            self._current_guess_label.configure(text=self.current_guess)
-            self.reset_board()
+            self.guesses.add(word)
+            self.update_score(word)
+            return True
+        else:
+            return False
+
+    def get_max_score(self):
+        return max_score_paths_2(self.board, self.words)
+
 
     def main_loop(self):
         # while play:
