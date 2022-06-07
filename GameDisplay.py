@@ -1,3 +1,6 @@
+import GameLogic as gl
+from ex12_utils import get_all_indexes
+
 class GameDisplay:
     def __init__(self, game_logic):
         self.game_logic = game_logic
@@ -42,6 +45,19 @@ class GameDisplay:
         self._buttons = [tk.Button(self._button_frame, font=("Courier", 20)) \
                          for _ in range(len(self.game_logic.board)** 2)]
 
+    def _init_board(self):
+        #frame
+        self._button_frame = tk.Frame(self._root)
+        self._button_frame.pack()
+        #create buttons
+        indexes = get_all_indexes(len(gl.board))
+        for idx in indexes:
+            x, y = idx
+            letter = gl.board[x][y]
+            button = MyButton(idx, letter, self._root)
+            self.buttons.append(button)
+            button.grid(row=x, column=y)
+
     def _fill_board(self):
         board = self.game_logic.board
         indexes = get_all_indexes(len(board))
@@ -54,11 +70,11 @@ class GameDisplay:
             button_num += 1
 
     def _button_event(self, letter, button_num):
-        def buttoner():
+        def _button_event_helper():
             self.current_guess += letter
             self._current_guess_label.configure(text = self.current_guess)
             self._buttons[button_num].configure(background = IN_GUESS, state="disabled")
-        return buttoner
+        return _button_event_helper
 
     def _play_round(self):
         self._timer = TURN_TIME

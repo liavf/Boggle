@@ -102,7 +102,6 @@ class GameDisplay:
         button.configure(background=IN_GUESS, command=None)
 
     def _button_event_release(self, event):
-
         # check if legal
         # update score
         # udate current guess

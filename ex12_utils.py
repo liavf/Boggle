@@ -168,15 +168,16 @@ def get_words(path):
      return words
 
 def get_relevant_words(path, board):
-    board_counter = Counter(sum(board, []))
+    board_counter = sum(board, [])
     words = set()
     with open(path, "r") as f:
         for line in f.readlines():
             word = line.strip()
             to_add = True
-            word_counter = Counter(word)
-            for key in word_counter:
-                if word_counter[key] != board_counter[key]:
+            for letter in word:
+                if letter in board_counter:
+                    board_counter.remove(letter)
+                else:
                     to_add = False
                     break
             if to_add:
