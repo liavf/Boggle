@@ -11,7 +11,9 @@ DEFAULT_FONT = ("Calibri", 20)
 BUTTONS_FONT = ("Calibri", 35)
 PLAY_FONT = ("Calibri", 35)
 DEFAULT_BG = "snow"
-WINDOW_BG = "lemon chiffon"
+
+COLORS = {"DARK": {"DEFAULT_BG": "grey"}, "LIGHT": {"DEFAULT_BG": "mint "
+                                                                  "cream"}}
 
 
 
@@ -21,21 +23,38 @@ class GameDisplay:
         self.current_guess = ""
         self._root = tk.Tk()
         self._root.geometry("450x450")
-        self._root.configure(bg = WINDOW_BG)
-        self.start_menu()
+        self.mode = "LIGHT"
+        self._root.configure(bg=COLORS[self.mode]["DEFAULT_BG"])
         self.win = False
+        self.start_menu()
 
     def start_menu(self):
         self.gl = GameLogic()
         # title
         self.photo_boggle = tk.PhotoImage(file=r"title_image.png")
-        self.title_label = tk.Label(self._root, image=self.photo_boggle, bg=WINDOW_BG)
+        self.title_label = tk.Label(self._root, image=self.photo_boggle, 
+                                    bg=COLORS[self.mode]["DEFAULT_BG"])
         self.title_label.pack(side=tk.TOP)
         self._root.title("Boggle")
         # play_game
+        self._mode_button = tk.Checkbutton(self._root, text='dark mode',
+                                        bg=COLORS[self.mode]["DEFAULT_BG"], command= self._change_color)
+        self._mode_button.pack(side=tk.BOTTOM)
         self._play_button = tk.Button(self._root, text="Play", command= \
         self._play_round, font=PLAY_FONT)
         self._play_button.pack(side=tk.BOTTOM)
+
+    def _change_color(self):
+        if self.mode == "LIGHT":
+            self.mode = "DARK"
+        else:
+            self.mode ="LIGHT"
+        #repaint
+        self._root.configure(bg=COLORS[self.mode]["DEFAULT_BG"])
+        self.title_label.configure(bg=COLORS[self.mode]["DEFAULT_BG"])
+        self._mode_button.configure(bg=COLORS[self.mode]["DEFAULT_BG"])
+
+
 
     def _play_round(self):
         self.game_gui()
@@ -55,18 +74,18 @@ class GameDisplay:
         # title
         self.title_label.destroy()
         self.photo_boggle = tk.PhotoImage(file=r"small_boggle.png")
-        self.title_label = tk.Label(self._root, image=self.photo_boggle, bg=WINDOW_BG)
+        self.title_label = tk.Label(self._root, image=self.photo_boggle, bg=COLORS[self.mode]["DEFAULT_BG"])
         self.title_label.pack(side=tk.TOP)
         # timer
         self._timer = self.gl.start_time
-        self._time_label = tk.Label(self._root, bg=WINDOW_BG,
+        self._time_label = tk.Label(self._root, bg=COLORS[self.mode]["DEFAULT_BG"],
                                     font=DEFAULT_FONT,
                                     text=f"time: {self._timer // 60} mins"
                                          f" {self._timer % 60} secs")
         self._time_label.pack(side=tk.TOP)
         # score
         self._score_label = tk.Label(self._root, font= SCORE_FONT,
-                                     text=f"score: {self.gl.score}", bg=WINDOW_BG)
+                                     text=f"score: {self.gl.score}", bg=COLORS[self.mode]["DEFAULT_BG"])
         self._score_label.pack()
 
         # check answer
@@ -76,16 +95,16 @@ class GameDisplay:
         self._check_answer_label.pack(side=tk.BOTTOM)
 
         # all guesses
-        self._all_guess_frame = tk.Frame(self._root, bg=WINDOW_BG)
+        self._all_guess_frame = tk.Frame(self._root, bg=COLORS[self.mode]["DEFAULT_BG"])
         self._all_guess_frame.place(x=50, y=170)
         # current selection label
         self._current_guess_label = tk.Label(self._all_guess_frame,
-                                             font=DEFAULT_FONT, bg=WINDOW_BG)
+                                             font=DEFAULT_FONT, bg=COLORS[self.mode]["DEFAULT_BG"])
         self._current_guess_label.pack(side=tk.TOP)
-        self._all_guess_title = tk.Label(self._all_guess_frame, bg=WINDOW_BG,
+        self._all_guess_title = tk.Label(self._all_guess_frame, bg=COLORS[self.mode]["DEFAULT_BG"],
                                          text="all guesses", font=DEFAULT_FONT)
         self._all_guess_title.pack(side=tk.TOP)
-        self._all_guess = tk.Label(self._all_guess_frame, bg=WINDOW_BG,
+        self._all_guess = tk.Label(self._all_guess_frame, bg=COLORS[self.mode]["DEFAULT_BG"],
                                    text="\n".join(self.gl.guesses),
                                    font=DEFAULT_FONT)
         self._all_guess.pack()
@@ -94,7 +113,7 @@ class GameDisplay:
     def _init_board(self):
         self._buttons = []
         # frame
-        self._button_frame = tk.Frame(self._root, bg=WINDOW_BG)
+        self._button_frame = tk.Frame(self._root, bg=COLORS[self.mode]["DEFAULT_BG"])
         self._button_frame.place(x=250, y=200)
         # create buttons
         indexes = get_all_indexes(len(self.gl.board))
@@ -157,7 +176,8 @@ class GameDisplay:
         self._check_answer_label.destroy()
         self._all_guess_frame.destroy()
         if self.win:
-            self.win_label = tk.Label(self._root, text="you won")
+            self.win_label = tk.Label(self._root, text="you won",
+                                      font=DEFAULT_FONT, bg=COLORS[self.mode]["DEFAULT_BG"])
             self.win_label.pack()
         self.win = False
         self._play_again = tk.Button(self._root, text="Play Again", command=
