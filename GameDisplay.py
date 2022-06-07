@@ -11,37 +11,6 @@ class GameDisplay:
         self._root = tk.Tk()
         self.start_menu()
         self.win = False
-        # # start menu
-        # #title
-        # self.photo_boggle = tk.PhotoImage(file=r"title_image.png")
-        # self.title_button = tk.Button(self._root, image=self.photo_boggle)
-        # self.title_button.pack(side=tk.TOP)
-        # self._root.title("Boggle")
-        # #play_game
-        # self._play_button = tk.Button(self._root, text="Play", command = \
-        #                         self._play_round, font = ("Courier", 30))
-        # self._play_button.pack(side=tk.BOTTOM)
-        # #timer
-        # self._timer = self.gl.start_time
-        # self._time_label = tk.Label(self._root, font = ("Courier", 20),
-        #                             text=f"time: {self._timer // 60} mins"
-        #                             f" {self._timer % 60} secs")
-        # self._time_label.pack(side=tk.TOP)
-        # #score
-        # self._score_label = tk.Label(self._root, font = ("Courier", 20),
-        #                              text = f"score: {self.gl.score}")
-        # self._score_label.pack()
-        # #current selection label
-        # self._current_guess_label = tk.Label(self._root, font = ("Courier", 30))
-        # self._current_guess_label.pack(side=tk.TOP)
-        #
-        # # check answer
-        # self._check_answer_label = tk.Button(self._root, font=("Courier", 30), command=self.check_answer, text="check")
-        # self._check_answer_label.pack(side=tk.BOTTOM)
-        #
-        # # all guesses
-        # self._all_guess_frame = tk.Label(self._root, bg="blue")
-        # self._all_guess_frame.pack()
 
     def start_menu(self):
         self.gl = GameLogic()
@@ -80,9 +49,6 @@ class GameDisplay:
         self._score_label = tk.Label(self._root, font=("Courier", 20),
                                      text=f"score: {self.gl.score}")
         self._score_label.pack()
-        # current selection label
-        self._current_guess_label = tk.Label(self._root, font=("Courier", 30))
-        self._current_guess_label.pack(side=tk.TOP)
 
         # check answer
         self._check_answer_label = tk.Button(self._root, font=("Courier", 30),
@@ -91,11 +57,15 @@ class GameDisplay:
         self._check_answer_label.pack(side=tk.BOTTOM)
 
         # all guesses
-
-        self._all_guess_frame_title = tk.Label(self._root, bg="old lace", text="all guesses")
-        self._all_guess_frame_title.pack(side = tk.LEFT)
-        self._all_guess_frame = tk.Label(self._root, bg="old lace", text="\n".join(self.gl.guesses))
+        self._all_guess_frame = tk.Frame(self._root, bg="old lace")
         self._all_guess_frame.pack(side = tk.LEFT)
+        # current selection label
+        self._current_guess_label = tk.Label(self._all_guess_frame, font=("Courier", 30))
+        self._current_guess_label.pack(side=tk.TOP)
+        self._all_guess_title = tk.Label(self._all_guess_frame, bg="old lace", text="all guesses")
+        self._all_guess_title.pack()
+        self._all_guess = tk.Label(self._all_guess_frame, bg="old lace", text="\n".join(self.gl.guesses))
+        self._all_guess.pack()
 
 
     def _init_board(self):
@@ -141,7 +111,7 @@ class GameDisplay:
 
     def check_answer(self):
         if self.gl.check_called(self.current_guess):
-           self._all_guess_frame.configure(text="\n".join(self.gl.guesses))
+           self._all_guess.configure(text="\n".join(self.gl.guesses))
            self._score_label.configure(text=f"score: {self.gl.score}")
            if self.gl.max_score <= self.gl.score:
                self.win = True
