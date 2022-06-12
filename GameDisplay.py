@@ -65,20 +65,13 @@ class GameDisplay:
         """
         Runs one round of boggle game
         """
+        self._clean_window()
         #change attributes and run gui for round
         self.gl.new_round()
         self._init_board()
         self._round_gui() #creates gui
         self._countdown()
-        # remove attributes of main menu if there are any
-        if hasattr(self, "_mode_button"):
-            self._mode_button.destroy()
-        if hasattr(self, "_play_button"):
-            self._play_button.destroy()
-        if hasattr(self, "_play_again_label"):
-            self._play_again_label.destroy()
-        if hasattr(self, "_win_label"):
-            self._win_label.destroy()
+
 
     def _round_gui(self):
         """
@@ -131,7 +124,6 @@ class GameDisplay:
                                    text="\n".join(self.gl.guesses),
                                    font=DEFAULT_FONT)
         self._all_guess.pack()
-
 
     def _init_board(self):
         """
@@ -208,13 +200,7 @@ class GameDisplay:
         """
         Restarts board and round
         """
-        self._restart_label.destroy()
-        self._time_label.destroy()
-        self._button_frame.destroy()
-        self._score_label.destroy()
-        self._current_guess_label.destroy()
-        self._check_answer_label.destroy()
-        self._all_guess_frame.destroy()
+        self._clean_window()
         self._play_round()
 
     def _play_again(self):
@@ -222,13 +208,7 @@ class GameDisplay:
         Restarts board and asks user if they want to play again
         :return:
         """
-        self._restart_label.destroy()
-        self._time_label.destroy()
-        self._button_frame.destroy()
-        self._score_label.destroy()
-        self._current_guess_label.destroy()
-        self._check_answer_label.destroy()
-        self._all_guess_frame.destroy()
+        self._clean_window()
         if self.win:
             self._win_label = tk.Label(self._root, text=WIN_TEXT,
                                       font=DEFAULT_FONT, bg=COLORS[self.mode][DEFAULT_BG])
@@ -238,6 +218,13 @@ class GameDisplay:
                                       command=
                                         self._play_round, font=DEFAULT_FONT)
         self._play_again_label.pack(side=tk.BOTTOM)
+
+    def _clean_window(self):
+        """
+        Removes all widget from window
+        """
+        for widget in self._root.winfo_children():
+            widget.destroy()
 
 
 if __name__ == '__main__':
