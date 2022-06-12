@@ -2,7 +2,7 @@ from typing import Tuple, List, Callable, Any
 import tkinter as tk
 
 Location = Tuple[int, int]
-BUTTON_FONT = ("Calibri", 15)
+# BUTTON_FONT = ("Calibri", 20)
 BUTTON_BG = "snow"
 
 class MyButton:

@@ -23,12 +23,14 @@ class GameDisplay:
         self.gl = GameLogic()
         self._root.title(WINDOW_TITLE)
         self._start_menu()
+        self.timer_started = False
 
     def start(self):
         """
         Starts game loop
         """
         self._root.mainloop()
+
 
     def _start_menu(self):
         """
@@ -69,6 +71,8 @@ class GameDisplay:
         #change attributes and run gui for round
         self.gl.new_round()
         self._init_board()
+        self.current_guess = ""
+        self.current_guess_path = 0
         self._round_gui() #creates gui
         self._countdown()
 
@@ -97,13 +101,13 @@ class GameDisplay:
         self._score_label.pack()
 
         # check answer label
-        self._check_answer_label = tk.Button(self._root, font=PLAY_FONT,
+        self._check_answer_label = tk.Button(self._root, font=DEFAULT_FONT,
                                              command=self._check_answer,
                                              text=CHECK_BUTTON)
         self._check_answer_label.pack(side=tk.BOTTOM)
 
         # restart label
-        self._restart_label = tk.Button(self._root, font=PLAY_FONT,
+        self._restart_label = tk.Button(self._root, font=DEFAULT_FONT,
                                     command=self._restart, text=RESTART_BUTTON)
         self._restart_label.pack(side=tk.BOTTOM)
         #### all guesses frame ###
@@ -140,7 +144,8 @@ class GameDisplay:
             neighbors = get_neighbors(idx, len(self.gl.board))
             button = MyButton(idx, letter, neighbors, self._button_frame,
                               self._button_event)
-            button.tk.configure(font=BUTTONS_FONT, width=BUTTON_LENGTH,
+            # pixelVirtual = tk.PhotoImage(width=BUTTON_LENGTH, height=BUTTON_LENGTH)
+            button.tk.configure(font=BUTTONS_FONT,width=BUTTON_LENGTH,
                                 height=BUTTON_LENGTH)
             button.tk.grid(row=x, column=y, padx=PAD, pady=PAD)
             self._buttons.append(button)
@@ -164,6 +169,11 @@ class GameDisplay:
         return _button_event_helper
 
     def _countdown(self):
+        if not self.timer_started:
+            self.timer_started = True
+            self._root.after(1000, self.tick)
+
+    def tick(self):
         if self._timer == 0 or self.win:
             self._time_label.configure(text=TIMES_UP_TEXT)
             self._play_again()
@@ -171,7 +181,7 @@ class GameDisplay:
             self._time_label.configure(text=f"time: {self._timer//60} mins"
                                             f" {self._timer%60} secs")
             self._timer -= 1
-            self._root.after(1000, self._countdown) #every_second
+        self._root.after(1000, self.tick)  # every_second
 
     def _check_answer(self):
         """
@@ -184,6 +194,7 @@ class GameDisplay:
            if len(self.gl.max_score_paths) == len(self.gl.guesses):
                self.win = True
         self.current_guess = ""
+        self.current_guess_path = 0
         self._current_guess_label.configure(text=self.current_guess)
         self._reset_board()
 

@@ -1,24 +1,24 @@
 #LOCATIONS AND SIZES
-BUTTON_LENGTH = 1
-BOARD_FRAME_X = 250
+BUTTON_LENGTH = 2
+BOARD_FRAME_X = 350
 BOARD_FRAME_Y = 200
 GUESS_FRAME_X = 50
 GUESS_FRAME_Y = 170
 PAD = 1
-WINDOW_SIZE = "450x450"
+WINDOW_SIZE = "500x500"
 ### COLORS AND FONTS ###
 IN_GUESS = "lavender blush"
 BACKGROUND = "mint cream"
 SCORE_FONT = ("Calibri", 20)
 DEFAULT_FONT = ("Calibri", 20)
-BUTTONS_FONT = ("Calibri", 35)
-PLAY_FONT = ("Calibri", 35)
+BUTTONS_FONT = ("Calibri", 15)
+PLAY_FONT = ("Calibri", 30)
 LIGHT = "LIGHT"
 DARK = "DARK"
 DEFAULT_BG = "DEFAULT_BG"
 COLORS = {DARK: {DEFAULT_BG: "grey"}, LIGHT: {DEFAULT_BG: "mint cream"}}
 ### TEXT ###
-WIN_TEXT = "You won!"
+WIN_TEXT = "Finished all words in board"
 PLAY_AGAIN_TEXT = "Play again"
 WINDOW_TITLE = "Boggle"
 TIMES_UP_TEXT = "time's up"
