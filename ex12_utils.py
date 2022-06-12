@@ -27,7 +27,7 @@ def start_word(start: str, words) -> Set:
             all.add(word)
     return all
 
-def get_dict_by_length(words: Dict) -> Dict[int, list[str]]:
+def get_dict_by_length(words: Dict) -> Dict[int, List[str]]:
     """ sorts word dict by lengths, returning a dict with:
     key = length of word, value = list of all words in length """
     mydict = {}
@@ -188,6 +188,7 @@ def _find_up_to_n_paths_helper(start, board, n, curr_path, curr_word, paths,
     return paths
 
 def max_score_paths(board, words):
+    words = filter_words_list(board, words)
     paths_for_score = []
     words_for_score = set()
     n = max([len(word) for word in words])
@@ -251,9 +252,10 @@ def get_relevant_words(path, board):
         for line in f.readlines():
             word = line.strip()
             to_add = True
+            board_counter_copy = board_counter.copy()
             for letter in word:
-                if letter in board_counter:
-                    board_counter.remove(letter)
+                if letter in board_counter_copy:
+                    board_counter_copy.remove(letter)
                 else:
                     to_add = False
                     break
@@ -261,6 +263,21 @@ def get_relevant_words(path, board):
                 words.add(line.strip())
     return words
 
+def filter_words_list(board: Board, words: set):
+    board_counter = sum(board, [])
+    res = set()
+    for word in words:
+        to_add = True
+        board_counter_copy = board_counter.copy()
+        for letter in word:
+            if letter in board_counter_copy:
+                board_counter_copy.remove(letter)
+            else:
+                to_add = False
+                break
+        if to_add:
+            res.add(word)
+    return res
 
 if __name__ == '__main__':
     #test
