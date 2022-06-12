@@ -57,11 +57,12 @@ class GameDisplay:
         if self.mode == LIGHT:
             self.mode = DARK
         else:
-            self.mode = DARK
+            self.mode = LIGHT
         #repaint
         self._root.configure(bg=COLORS[self.mode][DEFAULT_BG])
         self._title_label.configure(bg=COLORS[self.mode][DEFAULT_BG])
         self._mode_button.configure(bg=COLORS[self.mode][DEFAULT_BG])
+
 
     def _play_round(self):
         """

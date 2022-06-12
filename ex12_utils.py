@@ -92,8 +92,9 @@ def letter_in_index(char, index, words) -> Set:
     returns only words that work """
     all = set()
     for word in words:
-        if word[index] == char:
-            all.add(word)
+        if len(word) > index:
+            if word[index] == char:
+                all.add(word)
     return all
 
 def _find_path_helper(start, board, n, curr_path, curr_word, paths,
@@ -164,19 +165,24 @@ def find_up_to_n_paths(n: int, board, words):
         start_letter = get_from_location(board, location)
         paths_for_location = _find_up_to_n_paths_helper(location, board, n,
                                                         [location], start_letter,
-                                                        {}, words)
+                                                        [], words)
         paths.extend(path for path in paths_for_location)
     return paths
+
+# def filter_words(words, curr_path):
+#     for word in words.copy():
+#         if word[:len(curr_word)] == curr_word:
+#             words.remove(word)
+#     return words
 
 def _find_up_to_n_paths_helper(start, board, n, curr_path, curr_word, paths,
                         words):
     """ same as before but gets all length paths and not specific one """
     if curr_word in words: # count only words from list
-        if len(curr_word) in paths:
-            paths[len(curr_word)].append(curr_word)
-        else:
-            paths[len(curr_word)] = [curr_word]
-        # paths.append(curr_path[:])
+        # if len(curr_word) in paths:
+        #     paths[len(curr_word)].append(curr_word)
+        # else:
+         paths.append(curr_path[:])
 
     elif len(curr_word) <= n:
         for location in get_neighbors(start, len(board)):
@@ -184,29 +190,33 @@ def _find_up_to_n_paths_helper(start, board, n, curr_path, curr_word, paths,
                 curr_path.append(location)
                 letter = get_from_location(board, location)
                 curr_word += letter
-                words = letter_in_index(letter, len(curr_word) - 1, words)
+                words_dialeted = letter_in_index(letter, len(curr_word) - 1,
+                                              words)
                 if words:
                     _find_up_to_n_paths_helper(location, board, n, curr_path, curr_word,
-                                            paths, words)
+                                            paths, words_dialeted)
                 curr_path.remove(location)
                 curr_word = curr_word[:-1]
     return paths
 
 def max_score_paths(board, words):
     words = filter_words_list(board, words)
+    print("done1")
     paths_for_score = []
     words_for_score = set()
     n = max([len(word) for word in words])
     paths = find_up_to_n_paths(n, board, words)
-    paths = sorted(paths.keys(), reverse=True)
+    print("done2")
+    paths = sorted(paths, key=len, reverse=True)
         # .sort(key=len, reverse=True)
-    for path_len in paths:
-        for path in paths[path_len]:
-            word = get_word_from_path(board, path)
-            if word not in words_for_score:
-                paths_for_score.append(path)
-                words_for_score.add(word)
-    return calculate_score(paths_for_score)
+    # for path_len in paths:
+    #     for path in paths[path_len]:
+    for path in paths:
+        word = get_word_from_path(board, path)
+        if word not in words_for_score:
+            paths_for_score.append(path)
+            words_for_score.add(word)
+    return paths_for_score
 
 # def find_paths_by_word(board, word):
 #     paths = []
@@ -296,12 +306,12 @@ if __name__ == '__main__':
     pprint(board)
     #print(get_neighbors((2,2), len(board)))
 
-    # words = get_relevant_words("boggle_dict.txt", board)
-    # start = time.time()
-    # print(max_score_paths(board, words))
-    # first = time.time()
-    # print(first-start, "seconds")
-    #
+    words = get_relevant_words("boggle_dict.txt", board)
+    start = time.time()
+    print(max_score_paths(board, words))
+    first = time.time()
+    print(first-start, "seconds")
+
     # print(max_score_paths_2(board, words))
     # second = time.time()
     # print(second-first, "seconds")
