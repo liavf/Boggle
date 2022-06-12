@@ -72,7 +72,6 @@ class GameDisplay:
         self._round_gui() #creates gui
         self._countdown()
 
-
     def _round_gui(self):
         """
         Runs game gui for round

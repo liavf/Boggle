@@ -51,6 +51,4 @@ class GameLogic:
         self.score = 0
         self.board = randomize_board()
         self.guesses = set()
-        #todo: change this
-        self.max_score_paths = [1,2]
-        #self.max_score_paths = max_score_paths(self.board)
+        self.max_score_paths = max_score_paths(self.board, self.words)
