@@ -18,14 +18,7 @@ def get_word_from_path(board: Board, path: Path) -> str:
     else:
         return ""
 
-def start_word(start: str, words) -> Set:
-    """ checks if word starts with given start string
-    returns only words that work """
-    all = set()
-    for word in words:
-        if word[:len(start)] == start:
-            all.add(word)
-    return all
+
 
 def get_dict_by_length(words: Dict) -> Dict[int, List[str]]:
     """ sorts word dict by lengths, returning a dict with:
@@ -93,6 +86,15 @@ def find_length_n_paths(n: int, board: Board, words) -> List[Path]:
                                                [], words, "path")
         paths.extend(path for path in paths_for_location)
     return paths
+
+def letter_in_index(char, index, words) -> Set:
+    """ checks if word starts with given start string
+    returns only words that work """
+    all = set()
+    for word in words:
+        if word[index] == char:
+            all.add(word)
+    return all
 
 def _find_path_helper(start, board, n, curr_path, curr_word, paths,
                       words, find_by):
@@ -180,9 +182,12 @@ def _find_up_to_n_paths_helper(start, board, n, curr_path, curr_word, paths,
         for location in get_neighbors(start, len(board)):
             if location not in curr_path:
                 curr_path.append(location)
-                curr_word += get_from_location(board, location)
-                _find_up_to_n_paths_helper(location, board, n, curr_path, curr_word,
-                                        paths, words)
+                letter = get_from_location(board, location)
+                curr_word += letter
+                words = letter_in_index(letter, len(curr_word) - 1, words)
+                if words:
+                    _find_up_to_n_paths_helper(location, board, n, curr_path, curr_word,
+                                            paths, words)
                 curr_path.remove(location)
                 curr_word = curr_word[:-1]
     return paths
