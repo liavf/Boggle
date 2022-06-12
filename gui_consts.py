@@ -1,0 +1,34 @@
+#LOCATIONS AND SIZES
+BUTTON_LENGTH = 1
+BOARD_FRAME_X = 250
+BOARD_FRAME_Y = 200
+GUESS_FRAME_X = 50
+GUESS_FRAME_Y = 170
+PAD = 1
+WINDOW_SIZE = "450x450"
+### COLORS AND FONTS ###
+IN_GUESS = "lavender blush"
+BACKGROUND = "mint cream"
+SCORE_FONT = ("Calibri", 20)
+DEFAULT_FONT = ("Calibri", 20)
+BUTTONS_FONT = ("Calibri", 35)
+PLAY_FONT = ("Calibri", 35)
+LIGHT = "LIGHT"
+DARK = "DARK"
+DEFAULT_BG = "DEFAULT_BG"
+COLORS = {DARK: {DEFAULT_BG: "grey"}, LIGHT: {DEFAULT_BG: "mint cream"}}
+### TEXT ###
+WIN_TEXT = "You won!"
+PLAY_AGAIN_TEXT = "Play again"
+WINDOW_TITLE = "Boggle"
+TIMES_UP_TEXT = "time's up"
+MODE_BUTTON = "Dark mode"
+PLAY_BUTTON = "PLAY"
+CHECK_BUTTON = "CHECK"
+SCORE_TITLE = "Score: "
+TIME_TITLE = "Time: "
+RESTART_BUTTON = "RESTART"
+ALL_GUESSES_TITLE = "All guesses"
+### PATHS ###
+BIG_TITLE = "title_image.png"
+SMALL_TITLE = "small_boggle.png"

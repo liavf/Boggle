@@ -1,10 +1,24 @@
-from ex12_utils import get_neighbors
+from typing import Tuple, List, Callable, Any
 import tkinter as tk
+
+Location = Tuple[int, int]
 BUTTON_FONT = ("Calibri", 15)
 BUTTON_BG = "snow"
 
 class MyButton:
-    def __init__(self, idx, letter, neighbors, tk_root, command):
+    """
+    Button object for boggle game
+    """
+    def __init__(self, idx: Location, letter: str, neighbors: List[Location],
+                 tk_root: Any, command: Callable):
+        """
+        Initiates button object
+        :param idx: location tuple in board
+        :param letter: letter/s of button
+        :param neighbors: list of neighbor locations
+        :param tk_root: tk root that the button is a part of
+        :param command: command linked to button
+        """
         self.idx = idx
         self.letter = letter
         self.neighbors = neighbors
@@ -12,13 +26,7 @@ class MyButton:
         self.pressed = False
         self.command = command(self)
         self.tk = tk.Button(self.tk_root, text=self.letter,
-                            font=BUTTON_FONT, command=self.command,
-                            width=1, height=1, bg=BUTTON_BG)
-    def get_tk(self):
-        b = tk.Button(self.tk_root, text=self.letter, font=BUTTON_FONT, command=self.command)
-        # b.grid(idx[0], idx[1])
-        return b
-
-#
-# my = MyButton(1, "l", [], tk.Tk(), lambda x: x)
-# my.tk.configure(bg="red")
+                            command=self.command)
+    # def get_tk(self):
+    #     return tk.Button(self.tk_root, text=self.letter, font=BUTTON_FONT,
+    #                command=self.command)
