@@ -29,17 +29,17 @@ def get_dict_by_length(words: Dict) -> Dict[int, List[str]]:
             mydict[len(word)].append(word)
     return mydict
 
-def get_all_indexes(board_length: int) -> Location:
+def get_all_indexes(board_height: int, board_width: int) -> Location:
     """ returns all indexes in board
     generator """
-    for x in range(board_length):
-        for y in range(board_length):
+    for x in range(board_height):
+        for y in range(board_width):
             yield (x,y)
 
 def in_borders(cell, board: Board) -> bool:
     """ checks if given cell is within board borders """
     x, y = cell
-    if (x < 0 or x >= len(board)) or (y < 0 or y >= len(board)):
+    if (x < 0 or x >= len(board)) or (y < 0 or y >= len(board[0])):
         return False
     else:
         return True
@@ -51,7 +51,7 @@ def is_valid_path(board: Board, path: Path, words) -> str:
         index, next_index = 0, 1
         while next_index < len(path) and valid_path: # continue until length of path
             # checks if next cell is in borders and in previous cell neighbor list
-            if path[next_index] in get_neighbors(path[index], len(board)) and (in_borders(path[next_index], board)):
+            if path[next_index] in get_neighbors(path[index], len(board), len(board[0])) and (in_borders(path[next_index], board)):
                 index += 1
                 next_index += 1
             else:
@@ -64,20 +64,20 @@ def is_valid_path(board: Board, path: Path, words) -> str:
             return word
     return None
 
-def get_neighbors(location, board_length: int) -> List:
+def get_neighbors(location, board_height: int, board_width: int) -> List:
     """ gets neighbors of given cell (all directions) """
     neighbors = []
     x, y = location
     for dx, dy in itertools.product((0,1,-1),repeat=2):
-        if not (dx == dy == 0) and 0 <= x+dx <= board_length - 1 and \
-                                              0 <= y+dy <= board_length - 1:
+        if not (dx == dy == 0) and 0 <= x+dx <= board_height - 1 and \
+                                              0 <= y+dy <= board_width - 1:
                 neighbors.append((x+dx, y+dy))
     return neighbors
 
 def find_length_n_paths(n: int, board: Board, words) -> List[Path]:
     """ finds all paths that are n length """
     paths = []
-    for location in get_all_indexes(len(board)):
+    for location in get_all_indexes(len(board), len(board[0])):
         start_letter = get_from_location(board, location)
         paths_for_location = _find_path_helper(location, board, n,
                                                [location], start_letter,
@@ -110,7 +110,7 @@ def _find_path_helper(start, board, n, curr_path, curr_word, paths,
         elif len(key) == n:
             paths.append(curr_path[:])
     if len(key) <= n:
-        for location in get_neighbors(start, len(board)):
+        for location in get_neighbors(start, len(board), len(board[0])):
             # if curr_word == "ABC":
                 # print(location)
             if location not in curr_path:
@@ -142,7 +142,7 @@ def find_length_n_words(n, board, words):
     paths = []
     if n in get_dict_by_length(words):
         words = get_dict_by_length(words)[n]
-        for location in get_all_indexes(len(board)):
+        for location in get_all_indexes(len(board), len(board[0])):
             start_letter = get_from_location(board, location)
             paths_for_location = _find_path_helper(location, board, n,
                                                    [location], start_letter,
@@ -155,7 +155,7 @@ def find_length_n_words(n, board, words):
 def find_up_to_n_paths(n: int, board, words):
     """ finds all paths up to n length words - for getting all paths up to max length word"""
     paths = []
-    for location in get_all_indexes(len(board)):
+    for location in get_all_indexes(len(board), len(board[0])):
         start_letter = get_from_location(board, location)
         paths_for_location = _find_path_helper(location, board, n,
                                                     [location], start_letter,

@@ -138,11 +138,11 @@ class GameDisplay:
         self._button_frame = tk.Frame(self._root, bg=COLORS[self.mode][DEFAULT_BG])
         self._button_frame.place(x=BOARD_FRAME_X, y=BOARD_FRAME_Y)
         # create buttons
-        indexes = get_all_indexes(len(self.gl.board))
+        indexes = get_all_indexes(len(self.gl.board), len(self.gl.board[0]))
         for idx in indexes:
             x, y = idx
             letter = self.gl.board[x][y]
-            neighbors = get_neighbors(idx, len(self.gl.board))
+            neighbors = get_neighbors(idx, len(self.gl.board), len(self.gl.board[0]))
             button = MyButton(idx, letter, neighbors, self._button_frame,
                               self._button_event)
             # pixelVirtual = tk.PhotoImage(width=BUTTON_LENGTH, height=BUTTON_LENGTH)
