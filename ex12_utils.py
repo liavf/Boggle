@@ -318,4 +318,8 @@ if __name__ == '__main__':
     # words = get_words("boggle_dict.txt")
     # print(max_score_paths(board, words))
 
+    board = [[['A', 'B', 'C', 'D'], ['E', 'F', 'G', 'H'], ['I', 'G', 'K', 'L'],
+      ['M', 'N', 'O', 'P']], ('ABC', 'CDE', 'ABCD')]
 
+    words = get_relevant_words("boggle_dict.txt", board)
+    print(max_score_paths(board, words))
