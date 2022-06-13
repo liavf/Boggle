@@ -18,8 +18,6 @@ def get_word_from_path(board: Board, path: Path) -> str:
     else:
         return ""
 
-
-
 def get_dict_by_length(words: Dict) -> Dict[int, List[str]]:
     """ sorts word dict by lengths, returning a dict with:
     key = length of word, value = list of all words in length """
@@ -83,7 +81,7 @@ def find_length_n_paths(n: int, board: Board, words) -> List[Path]:
         start_letter = get_from_location(board, location)
         paths_for_location = _find_path_helper(location, board, n,
                                                [location], start_letter,
-                                               [], words, "path")
+                                               [], words, "path", False)
         paths.extend(path for path in paths_for_location)
     return paths
 
@@ -98,26 +96,43 @@ def letter_in_index(char, index, words) -> Set:
     return all
 
 def _find_path_helper(start, board, n, curr_path, curr_word, paths,
-                      words, find_by):
+                      words, find_by, up_to):
     """ recursive helper function for both n length words and n length paths by key """
     if find_by == "path":
         key = curr_path
     else:
         key = curr_word
 
-    if len(key) == n:
-        if curr_word in words: # count only words from list
+    if curr_word in words:
+        # print(curr_word,curr_path)
+        if up_to:
             paths.append(curr_path[:])
-
-    elif len(key) < n:
+        elif len(key) == n:
+            paths.append(curr_path[:])
+    if len(key) <= n:
         for location in get_neighbors(start, len(board)):
+            # if curr_word == "ABC":
+                # print(location)
             if location not in curr_path:
                 curr_path.append(location)
-                curr_word += get_from_location(board, location)
-                # words = start_word(curr_word, words)
-                # if words:
-                _find_path_helper(location, board, n, curr_path, curr_word,
-                                      paths, words, find_by)
+                letter = get_from_location(board, location)
+                # if curr_word == "AB":
+                    # print(curr_word, "letter", letter, location)
+                curr_word += letter
+                # if location == (0,0) or curr_word == "A":
+                #     print(letter,curr_word, words)
+                words_dialeted = letter_in_index(letter,
+                                                 len(curr_word) - 1,
+                                                 words)
+                # if curr_word == "ABC":
+                    # print(words_dialeted, n)
+                # if location == (0,0):
+                #     print(location, words_dialeted)
+                if words_dialeted:
+                    _find_path_helper(location, board, n,
+                                        curr_path, curr_word,
+                                        paths, words_dialeted,
+                                      find_by, up_to)
                 curr_path.remove(location)
                 curr_word = curr_word[:-1]
     return paths
@@ -131,86 +146,33 @@ def find_length_n_words(n, board, words):
             start_letter = get_from_location(board, location)
             paths_for_location = _find_path_helper(location, board, n,
                                                    [location], start_letter,
-                                                   [], words, "word")
+                                                   [], words, "word", False)
             paths.extend(path for path in paths_for_location)
         return paths
     else:
         return []
-
-# def max_score_paths_2(board, words):
-#     """"""
-#     paths_for_score = []
-#     words_for_score = set()
-#     max_len = max([len(word) for word in words])
-#     min_len = min([len(word) for word in words])
-#     for n in range(max_len, min_len - 1, -1):
-#         paths = find_length_n_paths(n, board, words)
-#         for path in paths:
-#             word = get_word_from_path(board, path)
-#             if word not in words_for_score:
-#                 paths_for_score.append(path)
-#                 words_for_score.add(word)
-#     return calculate_score(paths_for_score)
-
-def calculate_score(paths_for_score):
-    score = 0
-    for path in paths_for_score:
-        score += len(path) ** 2
-    return score
 
 def find_up_to_n_paths(n: int, board, words):
     """ finds all paths up to n length words - for getting all paths up to max length word"""
     paths = []
     for location in get_all_indexes(len(board)):
         start_letter = get_from_location(board, location)
-        paths_for_location = _find_up_to_n_paths_helper(location, board, n,
-                                                        [location], start_letter,
-                                                        [], words)
+        paths_for_location = _find_path_helper(location, board, n,
+                                                    [location], start_letter,
+                                                    [], words, "word", True)
         paths.extend(path for path in paths_for_location)
-    return paths
-
-# def filter_words(words, curr_path):
-#     for word in words.copy():
-#         if word[:len(curr_word)] == curr_word:
-#             words.remove(word)
-#     return words
-
-def _find_up_to_n_paths_helper(start, board, n, curr_path, curr_word, paths,
-                        words):
-    """ same as before but gets all length paths and not specific one """
-    if curr_word in words: # count only words from list
-        # if len(curr_word) in paths:
-        #     paths[len(curr_word)].append(curr_word)
-        # else:
-         paths.append(curr_path[:])
-
-    elif len(curr_word) <= n:
-        for location in get_neighbors(start, len(board)):
-            if location not in curr_path:
-                curr_path.append(location)
-                letter = get_from_location(board, location)
-                curr_word += letter
-                words_dialeted = letter_in_index(letter, len(curr_word) - 1,
-                                              words)
-                if words:
-                    _find_up_to_n_paths_helper(location, board, n, curr_path, curr_word,
-                                            paths, words_dialeted)
-                curr_path.remove(location)
-                curr_word = curr_word[:-1]
     return paths
 
 def max_score_paths(board, words):
     words = filter_words_list(board, words)
-    print("done1")
+    # print(words)
     paths_for_score = []
     words_for_score = set()
     n = max([len(word) for word in words])
+    # print(n)
     paths = find_up_to_n_paths(n, board, words)
-    print("done2")
     paths = sorted(paths, key=len, reverse=True)
-        # .sort(key=len, reverse=True)
-    # for path_len in paths:
-    #     for path in paths[path_len]:
+    # print(paths)
     for path in paths:
         word = get_word_from_path(board, path)
         if word not in words_for_score:
@@ -218,65 +180,12 @@ def max_score_paths(board, words):
             words_for_score.add(word)
     return paths_for_score
 
-# def find_paths_by_word(board, word):
-#     paths = []
-#     for location in get_all_indexes(len(board)):
-#         start_letter = get_from_location(board, location)
-#         if start_letter == word[0:]: #start only from relevant locations
-#             paths_for_location = _find_path_helper(location, board, n,
-#                                                 [location], start_letter,
-#                                                 [], [word], "path")
-#             paths.extend(path for path in paths_for_location)
-#     return paths
-
-# def max_score_paths_faster(board, words):
-#     paths_for_score = []
-#     words_for_score = set()
-#     max_len = max([len(word) for word in words])
-#     min_len = min([len(word) for word in words])
-#     for n in range(max_len, min_len - 1, -1):
-#         #search normaly from every index
-#         if n < THRESHOLD:
-#             paths = find_length_n_paths(n, board, words)
-#             for path in paths:
-#                 #todo: return from recursion
-#                 word = get_word_from_path(board, path)
-#                 if word not in words_for_score:
-#                     paths_for_score.append(path)
-#                     words_for_score.add(word)
-#         else:
-#             for word in [word for word in words if len(word) == n]:
-#                 paths = find_paths_by_word(board, word).sort(key=len)
-#                 if paths:
-#                     paths_for_score.append(paths[0]) #only longest path will be added
-#     return calculate_score(paths_for_score)
-
-
-
 def get_words(path):
      words = set()
      with open(path, "r") as f:
          for line in f.readlines():
              words.add(line.strip())
      return words
-
-def get_relevant_words(path, board):
-    board_counter = sum(board, [])
-    words = set()
-    with open(path, "r") as f:
-        for line in f.readlines():
-            word = line.strip()
-            to_add = True
-            board_counter_copy = board_counter.copy()
-            for letter in word:
-                if letter in board_counter_copy:
-                    board_counter_copy.remove(letter)
-                else:
-                    to_add = False
-                    break
-            if to_add:
-                words.add(line.strip())
-    return words
 
 def filter_words_list(board: Board, words: set):
     board_counter = sum(board, [])
@@ -295,31 +204,27 @@ def filter_words_list(board: Board, words: set):
     return res
 
 if __name__ == '__main__':
-    #test
     from boggle_board_randomizer import *
-    #board = randomize_board()
-    board = [['Y', 'A', 'X', 'I'],
-     ['M', 'S', 'G', 'T'],
-     ['R', 'T', 'P', 'G'],
-     ['B', 'S', 'T', 'W']]
+    # #board = randomize_board()
+    # board = [['Y', 'A', 'X', 'I'],
+    #  ['M', 'S', 'G', 'T'],
+    #  ['R', 'T', 'P', 'G'],
+    #  ['B', 'S', 'T', 'W']]
     from pprint import pprint
-    pprint(board)
-    #print(get_neighbors((2,2), len(board)))
-
-    words = get_relevant_words("boggle_dict.txt", board)
-    start = time.time()
-    print(max_score_paths(board, words))
-    first = time.time()
-    print(first-start, "seconds")
-
-    # print(max_score_paths_2(board, words))
-    # second = time.time()
-    # print(second-first, "seconds")
+    # pprint(board)
+    #
     # words = get_words("boggle_dict.txt")
+    # start = time.time()
     # print(max_score_paths(board, words))
-
-    board = [[['A', 'B', 'C', 'D'], ['E', 'F', 'G', 'H'], ['I', 'G', 'K', 'L'],
-      ['M', 'N', 'O', 'P']], ('ABC', 'CDE', 'ABCD')]
-
-    words = get_relevant_words("boggle_dict.txt", board)
-    print(max_score_paths(board, words))
+    # first = time.time()
+    # # print(first-start, "seconds")
+    #
+    # a = max_score_paths([['A', 'B', 'C', 'D'], ['E', 'F', 'G', 'H'], ['I',
+    #                                                                 'G', 'K', 'L'],
+    #      ['M', 'N', 'O', 'P']], ('ABC', 'CDE', 'ABCD'))
+    # board = [['A', 'B', 'C', 'D'], ['E', 'F', 'G', 'H'], ['I','G', 'K', 'L'], ['M', 'N', 'O', 'P']]
+    # pprint(board)
+    # print(a)
+    # board = [['A', 'B', 'C', 'D'], ['E', 'F', 'G', 'H'], ['I','G', 'K', 'L'], ['M', 'N', 'O', 'P']]
+    # for location in get_all_indexes(len(board)):
+    #     print(location)
