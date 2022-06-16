@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Dict, Set, Tuple, Optional, Generator
+from typing import List, Dict, Set, Any, Tuple
 
 Board = List[List[str]]
 Location = Tuple[int, int]
@@ -8,7 +8,7 @@ Path = List[Location]
 PATH_KEYWORD = "path"
 WORD_KEYWORD = "word"
 
-def get_from_location(board: Board, location: Location) -> str:
+def get_from_location(board: Board, location:Location) -> str:
     """
     gets the letter in given location
     """
@@ -37,7 +37,7 @@ def get_dict_by_length(words: Set[str]) -> Dict[int, Set[str]]:
             mydict[len(word)].add(word)
     return mydict
 
-def get_all_indexes(board_height: int, board_width: int) -> Generator:
+def get_all_indexes(board_height: int, board_width: int) -> Location:
     """
     returns all indexes in board
     works as generator
@@ -79,7 +79,7 @@ def check_valid(board: Board, path: Path) -> bool:
     return valid_path
 
 
-def is_valid_path(board: Board, path: Path, words: Set[str]) -> Optional[str]:
+def is_valid_path(board: Board, path: Path, words: Set[str]) -> str:
     """
     checks if path is valid and checks if word is in word list
     """
@@ -201,6 +201,19 @@ def find_max_paths(board: Board, words: Set[str]) -> List[Path]:
                 all_paths.append(highest)
     return all_paths
 
+# def find_up_to_n_paths(n: int, board, words: Set[str]) -> List[Path]:
+#     """
+#     finds all paths up to n length words - for getting all paths up to max length word
+#     """
+#     paths = []
+#     for location in get_all_indexes(len(board), len(board[0])):
+#         start_letter = get_from_location(board, location)
+#         paths_for_location = _find_path_helper(location, board, n,
+#                                                     [location], start_letter,
+#                                                     [], words, WORD_KEYWORD, True)
+#         paths.extend(path for path in paths_for_location)
+#     return paths
+
 def max_score_paths(board: Board, words: Set[str]) -> List[Path]:
     """
     returns paths that lead to max score in game
@@ -209,6 +222,17 @@ def max_score_paths(board: Board, words: Set[str]) -> List[Path]:
     if not words:
         return []
     return find_max_paths(board, words)
+    # paths_for_score = []
+    # words_for_score = set()
+    # n = max([len(word) for word in words])
+    # paths = find_up_to_n_paths(n, board, words)
+    # paths = sorted(paths, key=len, reverse=True)
+    # for path in paths:
+    #     word = get_word_from_path(board, path)
+    #     if word not in words_for_score:
+    #         paths_for_score.append(path)
+    #         words_for_score.add(word)
+    # return paths_for_score
 
 def get_words(path: str) -> Set[str]:
     """
@@ -244,3 +268,13 @@ def load_words_dict(file):
     lines = set(line.strip() for line in milon.readlines())
     milon.close()
     return lines
+
+if __name__ == "__main__":
+    board = [['E', 'M', 'AB', 'O'],
+                ['IN', 'ON', 'AN', 'M'],
+                ['ST', 'R', 'U', 'TH'],
+                ['Y', 'ST', 'R', 'W']]
+    word = load_words_dict("../boggle_dict.txt")
+    # print(find_max_paths(board, word))
+
+

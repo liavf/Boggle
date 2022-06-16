@@ -2,7 +2,7 @@ from ex12_utils import *
 from boggle_board_randomizer import *
 import tkinter as tk
 from time import strftime
-WORDS_PATH = "boggle_dict.txt"
+WORDS_PATH = "../boggle_dict.txt"
 IN_GUESS = 'red'
 TURN_TIME = 60*3 #SECONDS
 
@@ -30,7 +30,7 @@ class GameDisplay:
         self.current_guess = ""
         self._root = tk.Tk()
         #title
-        photo_boggle = tk.PhotoImage(file=r"title_image.png")
+        photo_boggle = tk.PhotoImage(file=r"../title_image.png")
         button2 = tk.Button(self._root, image=photo_boggle)
         button2.pack()
         self._root.title('@ grade us 105 @')

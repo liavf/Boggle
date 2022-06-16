@@ -2,7 +2,8 @@ from ex12_utils import *
 from boggle_board_randomizer import *
 
 WORDS_PATH = "boggle_dict.txt"
-START_TIME = 180 #seconds
+START_TIME = 2 #seconds
+
 
 class GameLogic:
     """
@@ -51,4 +52,4 @@ class GameLogic:
         self.score = 0
         self.board = randomize_board()
         self.guesses = set()
-        self.max_score_paths = max_score_paths(self.board, self.words)
+        # self.max_score_paths = max_score_paths(self.board, self.words)

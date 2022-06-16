@@ -18,7 +18,6 @@ class GameDisplay:
         self._root.geometry(WINDOW_SIZE)
         self.mode = LIGHT
         self._root.configure(bg=COLORS[self.mode][DEFAULT_BG])
-        self.win = False
         self.gl = GameLogic()
         self._root.title(WINDOW_TITLE)
         self._start_menu()
@@ -90,7 +89,7 @@ class GameDisplay:
         self._timer = self.gl.start_time
         self._time_label = tk.Label(self._root, bg=COLORS[self.mode][DEFAULT_BG],
                                     font=DEFAULT_FONT,
-                                    text=TIME_TITLE + f"{self._timer // 60} mins {self._timer % 60} secs")
+                                    text=TIME_LABEL_STR.format(self._timer//60, self._timer%60))
         self._time_label.pack(side=tk.TOP)
         # score label
         self._score_label = tk.Label(self._root, font= SCORE_FONT,
@@ -102,12 +101,12 @@ class GameDisplay:
         self._check_answer_label = tk.Button(self._root, font=DEFAULT_FONT,
                                              command=self._check_answer,
                                              text=CHECK_BUTTON)
-        self._check_answer_label.pack(side=tk.BOTTOM)
+        self._check_answer_label.place(x=CHECK_X, y=CHECK_Y)
 
         # restart label
         self._restart_label = tk.Button(self._root, font=DEFAULT_FONT,
                                     command=self._restart, text=RESTART_BUTTON)
-        self._restart_label.pack(side=tk.BOTTOM)
+        self._restart_label.place(x=RESTART_X, y=RESTART_Y)
         #### all guesses frame ###
         self._all_guess_frame = tk.Frame(self._root, bg=COLORS[self.mode][DEFAULT_BG])
         self._all_guess_frame.place(x=GUESS_FRAME_X, y=GUESS_FRAME_Y)
@@ -123,7 +122,7 @@ class GameDisplay:
         # all guesses frame
         self._all_guess = tk.Label(self._all_guess_frame, bg=COLORS[self.mode][DEFAULT_BG],
                                    text="\n".join(self.gl.guesses),
-                                   font=DEFAULT_FONT)
+                                   font=GUESSES_FONT)
         self._all_guess.pack()
 
     def _init_board(self):
@@ -143,7 +142,7 @@ class GameDisplay:
             button = MyButton(idx, letter, neighbors, self._button_frame,
                               self._button_event)
             button.tk.configure(font=BUTTONS_FONT,width=BUTTON_LENGTH,
-                                height=BUTTON_LENGTH)
+                                height=BUTTON_LENGTH, bg="black")
             button.tk.grid(row=x, column=y, padx=PAD, pady=PAD)
             self._buttons.append(button)
 
@@ -171,7 +170,8 @@ class GameDisplay:
             self._root.after(1000, self.tick)
 
     def tick(self):
-        if self._timer == 0 or self.win:
+        if self._timer == 0:
+            # if self._timer == 0 or self.win
             # self._time_label.configure(text=TIMES_UP_TEXT)
             self._play_again()
         else:
@@ -187,8 +187,8 @@ class GameDisplay:
         if self.gl.check_called(self.current_guess, self.current_guess_path):
            self._all_guess.configure(text="\n".join(self.gl.guesses))
            self._score_label.configure(text=SCORE_TITLE + f"{self.gl.score}")
-           if len(self.gl.max_score_paths) == len(self.gl.guesses):
-               self.win = True
+           # if len(self.gl.max_score_paths) == len(self.gl.guesses):
+           #     self.win = True
         self.current_guess = ""
         self.current_guess_path = 0
         self._current_guess_label.configure(text=self.current_guess)
@@ -215,11 +215,14 @@ class GameDisplay:
         :return:
         """
         self._clean_window()
-        if self.win:
-            self._win_label = tk.Label(self._root, text=WIN_TEXT,
-                                      font=DEFAULT_FONT, bg=COLORS[self.mode][DEFAULT_BG])
-            self._win_label.pack()
-        self.win = False
+        # if self.win:
+        #     self._win_label = tk.Label(self._root, text=WIN_TEXT,
+        #                               font=DEFAULT_FONT, bg=COLORS[self.mode][DEFAULT_BG])
+        #     self._win_label.pack()
+        # # self.win = False
+        self._game_finished_label = tk.Label(self._root, text=GAME_OVER_TEXT,
+                             font=DEFAULT_FONT, bg=COLORS[self.mode][DEFAULT_BG])
+        self._game_finished_label.place(x=GAME_OVER_X, y=GAME_OVER_Y)
         self._play_again_label = tk.Button(self._root, text=PLAY_AGAIN_TEXT,
                                       command=
                                         self._restart, font=DEFAULT_FONT)
@@ -231,8 +234,3 @@ class GameDisplay:
         """
         for widget in self._root.winfo_children():
             widget.destroy()
-
-#
-# if __name__ == '__main__':
-#     gd = GameDisplay()
-#     gd.start()
