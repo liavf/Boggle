@@ -49,7 +49,6 @@ class GameLogic:
         Initiates new game round
         """
         self.score = 0
-        self.board = [["A", "B", "C"], ["D", "E", "F"]]
-        # self.board = randomize_board()
+        self.board = randomize_board()
         self.guesses = set()
         self.max_score_paths = max_score_paths(self.board, self.words)
