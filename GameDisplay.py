@@ -4,7 +4,6 @@ from ex12_utils import get_all_indexes, get_neighbors
 import tkinter as tk
 from gui_consts import *
 
-
 class GameDisplay:
     """
     Gui class for boggle game
@@ -30,7 +29,6 @@ class GameDisplay:
         Starts game loop
         """
         self._root.mainloop()
-
 
     def _start_menu(self):
         """
@@ -62,7 +60,6 @@ class GameDisplay:
         self._root.configure(bg=COLORS[self.mode][DEFAULT_BG])
         self._title_label.configure(bg=COLORS[self.mode][DEFAULT_BG])
         self._mode_button.configure(bg=COLORS[self.mode][DEFAULT_BG])
-
 
     def _play_round(self):
         """
@@ -145,7 +142,6 @@ class GameDisplay:
             neighbors = get_neighbors(idx, len(self.gl.board), len(self.gl.board[0]))
             button = MyButton(idx, letter, neighbors, self._button_frame,
                               self._button_event)
-            # pixelVirtual = tk.PhotoImage(width=BUTTON_LENGTH, height=BUTTON_LENGTH)
             button.tk.configure(font=BUTTONS_FONT,width=BUTTON_LENGTH,
                                 height=BUTTON_LENGTH)
             button.tk.grid(row=x, column=y, padx=PAD, pady=PAD)
@@ -176,11 +172,10 @@ class GameDisplay:
 
     def tick(self):
         if self._timer == 0 or self.win:
-            self._time_label.configure(text=TIMES_UP_TEXT)
+            # self._time_label.configure(text=TIMES_UP_TEXT)
             self._play_again()
         else:
-            self._time_label.configure(text=f"time: {self._timer//60} mins"
-                                            f" {self._timer%60} secs")
+            self._time_label.configure(text=TIME_LABEL_STR.format(self._timer//60, self._timer%60))
             self._timer -= 1
         self._root.after(1000, self.tick)  # every_second
 
@@ -204,7 +199,7 @@ class GameDisplay:
         Resets buttons after answer is checked
         """
         for button in self._buttons:
-            button.tk.configure(state="normal", bg="white")
+            button.tk.configure(state="normal", bg=BUTTON_BG)
             button.pressed = False
 
     def _restart(self):
@@ -227,7 +222,7 @@ class GameDisplay:
         self.win = False
         self._play_again_label = tk.Button(self._root, text=PLAY_AGAIN_TEXT,
                                       command=
-                                        self._play_round, font=DEFAULT_FONT)
+                                        self._restart, font=DEFAULT_FONT)
         self._play_again_label.pack(side=tk.BOTTOM)
 
     def _clean_window(self):
@@ -237,7 +232,7 @@ class GameDisplay:
         for widget in self._root.winfo_children():
             widget.destroy()
 
-
-if __name__ == '__main__':
-    gd = GameDisplay()
-    gd.start()
+#
+# if __name__ == '__main__':
+#     gd = GameDisplay()
+#     gd.start()

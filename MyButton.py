@@ -2,8 +2,6 @@ from typing import Tuple, List, Callable, Any
 import tkinter as tk
 
 Location = Tuple[int, int]
-# BUTTON_FONT = ("Calibri", 20)
-BUTTON_BG = "snow"
 
 class MyButton:
     """
@@ -27,6 +25,3 @@ class MyButton:
         self.command = command(self)
         self.tk = tk.Button(self.tk_root, text=self.letter,
                             command=self.command)
-    # def get_tk(self):
-    #     return tk.Button(self.tk_root, text=self.letter, font=BUTTON_FONT,
-    #                command=self.command)

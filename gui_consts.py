@@ -32,3 +32,6 @@ ALL_GUESSES_TITLE = "All guesses"
 ### PATHS ###
 BIG_TITLE = "title_image.png"
 SMALL_TITLE = "small_boggle.png"
+
+TIME_LABEL_STR = "time: {} mins {} secs"
+BUTTON_BG = "snow"
