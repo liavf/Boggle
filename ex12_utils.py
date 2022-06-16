@@ -178,6 +178,29 @@ def find_length_n_words(n: int, board: Board, words: Set[str]) -> List[Path]:
     else:
         return []
 
+def find_max_paths(board: Board, words: Set[str]) -> List[Path]:
+    all_paths = []
+    for word in words:
+        start_index = []
+        for row in range(len(board)):
+            for col in range(len(board[row])):
+                let = board[row][col]
+                if let == word[:len(let)]:
+                    start_index.append(((row, col), let))
+        all_word_path = []
+        if start_index:
+            for ind in start_index:
+                ind_path = _find_path_helper(ind[0], board, len(word),
+                                  [ind[0]], ind[1],
+                                  [], {word}, WORD_KEYWORD, True)
+                if ind_path:
+                    all_word_path.extend([path for path in ind_path])
+
+            if all_word_path:
+                highest = max(all_word_path, key=lambda x: len(x))
+                all_paths.append(highest)
+    return all_paths
+
 def find_up_to_n_paths(n: int, board, words: Set[str]) -> List[Path]:
     """
     finds all paths up to n length words - for getting all paths up to max length word
@@ -198,17 +221,18 @@ def max_score_paths(board: Board, words: Set[str]) -> List[Path]:
     words = filter_words_list(board, words)
     if not words:
         return []
-    paths_for_score = []
-    words_for_score = set()
-    n = max([len(word) for word in words])
-    paths = find_up_to_n_paths(n, board, words)
-    paths = sorted(paths, key=len, reverse=True)
-    for path in paths:
-        word = get_word_from_path(board, path)
-        if word not in words_for_score:
-            paths_for_score.append(path)
-            words_for_score.add(word)
-    return paths_for_score
+    return find_max_paths(board, words)
+    # paths_for_score = []
+    # words_for_score = set()
+    # n = max([len(word) for word in words])
+    # paths = find_up_to_n_paths(n, board, words)
+    # paths = sorted(paths, key=len, reverse=True)
+    # for path in paths:
+    #     word = get_word_from_path(board, path)
+    #     if word not in words_for_score:
+    #         paths_for_score.append(path)
+    #         words_for_score.add(word)
+    # return paths_for_score
 
 def get_words(path: str) -> Set[str]:
     """
@@ -238,3 +262,19 @@ def filter_words_list(board: Board, words: Set[str]) -> Set[str]:
         if to_add:
             res.add(word)
     return res
+
+def load_words_dict(file):
+    milon = open(file)
+    lines = set(line.strip() for line in milon.readlines())
+    milon.close()
+    return lines
+
+if __name__ == "__main__":
+    board = [['E', 'M', 'AB', 'O'],
+                ['IN', 'ON', 'AN', 'M'],
+                ['ST', 'R', 'U', 'TH'],
+                ['Y', 'ST', 'R', 'W']]
+    word = load_words_dict("boggle_dict.txt")
+    # print(find_max_paths(board, word))
+
+
